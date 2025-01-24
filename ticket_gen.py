@@ -95,9 +95,38 @@ def create_pdf(ticket_image_path, qr_file, pdf_path):
 
         # Finalize the PDF
         c.save()
-
+        os.remove(qr_file)
     except Exception as e:
         print(f"Error generating PDF: {e}")
+
+def save_to_db(gname, ticketid):
+    name = str(gname)
+    ticketId = str(ticketid)
+    new_entry = {
+        "name": name,
+        "ticketId": ticketId
+    }
+
+    if not os.path.exists("ticket_db.json"):
+    with open("ticket_db.json", "w") as db:
+      json.dump([], db)
+
+    # Check if the file exists
+    if os.path.exists("ticket_db.json"):
+        with open("ticket_db.json", "r") as db:
+            try:
+                data = json.load(db)
+            except json.JSONDecodeError:
+                data = []
+    else:
+        data = []
+    
+    # Append the new entry
+    data.append(new_entry)
+    
+    # Save the updated data back to the file
+    with open("ticket_db.json", "w") as db:
+        json.dump(data, db, indent=2)
 
 # Main script to process data
 def process_csv_and_generate_tickets(csv_file):
@@ -126,6 +155,7 @@ def process_csv_and_generate_tickets(csv_file):
                 "Name": row["Full Name"],
                 "Standard": row["Standard"]
             }, ticket_id, output_file, qr_file)
+            save_to_db(row["Full Name"],ticket_id)
         elif group_size in [5, 10]:
             # Group tickets
             for i in range(1, group_size + 1):
@@ -142,10 +172,12 @@ def process_csv_and_generate_tickets(csv_file):
                     qr_file = os.path.join(output_base_dir, f"qr_{ticket_id}.png")  # Specify the correct directory
                     generate_qr(qr_data, qr_file)
                     output_file = os.path.join(output_base_dir, f"ticket_{ticket_id}.png")  # Specify the correct directory
+
                     create_ticket({
                         "Name": row[guest_name_col],
                         "Standard": row["Standard"]
                     }, ticket_id, output_file, qr_file)
+                    save_to_db(row[guest_name_col],ticket_id)
 
 # Run the script
 if __name__ == "__main__":
