@@ -99,34 +99,39 @@ def create_pdf(ticket_image_path, qr_file, pdf_path):
     except Exception as e:
         print(f"Error generating PDF: {e}")
 
+import os
+import json
+
 def save_to_db(gname, ticketid):
-    name = str(gname)
-    ticketId = str(ticketid)
-    new_entry = {
-        "name": name,
-        "ticketId": ticketId
-    }
+  name = str(gname)
+  ticketId = str(ticketid)
+  new_entry = {
+    "name": name,
+    "ticketId": ticketId
+  }
 
-    if not os.path.exists("ticket_db.json"):
+  # Ensure the file exists and initialize it if it doesn't
+  if not os.path.exists("ticket_db.json"):
     with open("ticket_db.json", "w") as db:
-      json.dump([], db)
+      json.dump({}, db)  # Create an empty dictionary in the JSON file
 
-    # Check if the file exists
-    if os.path.exists("ticket_db.json"):
-        with open("ticket_db.json", "r") as db:
-            try:
-                data = json.load(db)
-            except json.JSONDecodeError:
-                data = []
-    else:
-        data = []
-    
-    # Append the new entry
-    data.append(new_entry)
-    
-    # Save the updated data back to the file
-    with open("ticket_db.json", "w") as db:
-        json.dump(data, db, indent=2)
+  # Load the existing data
+  try:
+    with open("ticket_db.json", "r") as db:
+      data = json.load(db)
+      if not isinstance(data, dict):
+        raise ValueError("Invalid JSON structure: Expected a dictionary.")
+  except (json.JSONDecodeError, ValueError):
+    # Reset the file if invalid or corrupted
+    data = {}
+
+  # Add or update the entry using ticketId as the key
+  data[ticketId] = new_entry
+
+  # Save the updated data back to the file
+  with open("ticket_db.json", "w") as db:
+    json.dump(data, db, indent=2)
+
 
 # Main script to process data
 def process_csv_and_generate_tickets(csv_file):
