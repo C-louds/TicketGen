@@ -159,7 +159,7 @@ def process_csv_and_generate_tickets(csv_file):
             create_ticket({
                 "Name": row["Full Name"],
                 "Standard": row["Standard"]
-            }, ticket_id, output_file, qr_file)
+            }, ticket_id, output_file, qr_file)   
             save_to_db(row["Full Name"],ticket_id)
         elif group_size in [5, 10]:
             # Group tickets
