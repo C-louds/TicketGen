@@ -160,7 +160,7 @@ def process_csv_and_generate_tickets(csv_file):
             # Single ticket
             ticket_id = str(uuid.uuid4())
             qr_data = (
-                f"Name: {row['Full Name']}, Timestamp: {row['Timestamp']}, "
+                f"Name: {row['Full Name']},TicketId: {ticket_id}, Timestamp: {row['Timestamp']}, "
                 f"Gender: {row['Gender']}, Contact: {row[contact_col]}, "
                 f"Standard: {row['Standard']}",
             )
@@ -190,7 +190,7 @@ def process_csv_and_generate_tickets(csv_file):
                 if row[guest_name_col]:
                     ticket_id = str(uuid.uuid4())
                     qr_data = (
-                        f"Group Timestamp: {row['Timestamp']}, Standard: {row['Standard']}, "
+                        f"Group Timestamp: {row['Timestamp']},TicketId: {ticket_id}, Standard: {row['Standard']}, "
                         f"School: {row['School']}, Guest Name: {row[guest_name_col]}, "
                         f"Guest Contact: {row[guest_contact_col]}, Guest Gender: {row[guest_gender_col]}"
                     )
