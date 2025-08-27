@@ -120,13 +120,13 @@ def save_to_db(gname, ticketid):
     }
 
     # Ensure the file exists and initialize it if it doesn't
-    if not os.path.exists("ticket_db.json"):
-        with open("ticket_db.json", "w") as db:
+    if not os.path.exists("ticket_eg.json"):
+        with open("ticket_eg.json", "w") as db:
             json.dump({}, db)  # Create an empty dictionary in the JSON file
 
     # Load the existing data
     try:
-        with open("ticket_db.json", "r") as db:
+        with open("ticket_eg.json", "r") as db:
             data = json.load(db)
             if not isinstance(data, dict):
                 raise ValueError(
@@ -139,7 +139,7 @@ def save_to_db(gname, ticketid):
     data[ticketId] = new_entry
 
     # Save the updated data back to the file
-    with open("ticket_db.json", "w") as db:
+    with open("ticket_eg.json", "w") as db:
         json.dump(data, db, indent=2)
 
 
